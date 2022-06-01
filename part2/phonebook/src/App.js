@@ -10,8 +10,8 @@ const App = () => {
   const [searchText, setSearchText] = useState('')
 
   useEffect(() => {
-    people.getAll().then(response => {
-      setPersons(response.data)
+    people.getAll().then(persons => {
+      setPersons(persons)
     })
   }, [])
 
@@ -20,12 +20,22 @@ const App = () => {
   }
 
   const addPerson = (newPerson) => {
-    if (persons.find((person) => person.name === newPerson.name)) {
-      alert(`${newPerson.name} is already added to the phonebook`);
-      return false;
+    const oldPerson = persons.find(person => person.name === newPerson.name);
+    if (oldPerson) {
+      const message =
+        `${newPerson.name} is already in the phonebook with number ${oldPerson.number}.
+        Replace old number with a ${newPerson.number}?`;
+      if (window.confirm(message)) {
+        people.update(oldPerson.id, newPerson).then(updatedPerson => {
+          setPersons(persons.map(person => person.id === oldPerson.id ? updatedPerson : person))
+        })
+        return true;
+      } else {
+        return false;
+      }
     }
-    people.create(newPerson).then(response => {
-      setPersons(persons.concat(response.data));
+    people.create(newPerson).then(addedPerson => {
+      setPersons(persons.concat(addedPerson));
     })
     return true;
   }
