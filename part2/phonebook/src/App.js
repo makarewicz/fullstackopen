@@ -3,19 +3,16 @@ import Persons from './components/Persons';
 import PersonForm from './components/PersonForm';
 import Filter from './components/Filter';
 import axios from 'axios'
+import people from './services/people';
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [searchText, setSearchText] = useState('')
 
   useEffect(() => {
-    console.log('effect');
-    axios
-      .get("http://localhost:3001/persons")
-      .then(response => {
-        console.log('fetched persons');
-        setPersons(response.data)
-      })
+    people.getAll().then(response => {
+      setPersons(response.data)
+    })
   }, [])
 
   const handleSearchTextChange = (newSearchText) => {
@@ -27,8 +24,9 @@ const App = () => {
       alert(`${newPerson.name} is already added to the phonebook`);
       return false;
     }
-    axios.post("http://localhost:3001/persons", newPerson);
-    setPersons(persons.concat(newPerson));
+    people.create(newPerson).then(response => {
+      setPersons(persons.concat(response.data));
+    })
     return true;
   }
 
