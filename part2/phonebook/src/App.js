@@ -30,6 +30,13 @@ const App = () => {
     return true;
   }
 
+  const removePerson = (id) => {
+    console.log("Removing: ", id)
+    people.remove(id).then(response => {
+      setPersons(persons.filter(person => person.id !== id));
+    });
+  };
+
   const personsToShow = persons.filter(
     (person) => person.name.toLowerCase().includes(
       searchText.toLowerCase()));
@@ -41,7 +48,7 @@ const App = () => {
       <h3>Add a new</h3>
       <PersonForm addNewPerson={addPerson} />
       <h3>Numbers</h3>
-      <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} onRemovePerson={removePerson} />
     </div >
   )
 }
