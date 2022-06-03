@@ -57,8 +57,14 @@ const App = () => {
     const person = persons.find(person => person.id === id);
     people.remove(id).then(response => {
       setPersons(persons.filter(person => person.id !== id));
-    }).then(() => successMessage(`Removed ${person.name}`));
-  };
+    }).then(() => successMessage(`Removed ${person.name}`))
+      .catch(error => {
+        if (error.response.status === 404) {
+          errorMessage(`${person.name} was not found on server`);
+          setPersons(persons.filter(person => person.id !== id));
+        }
+      });
+  }
 
   const personsToShow = persons.filter(
     (person) => person.name.toLowerCase().includes(
